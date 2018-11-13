@@ -31,58 +31,27 @@ try:
     page = 0
     end_crawl = False
     while not end_crawl:
-        all_job_per_page = driver.find_elements_by_css_selector('#hightlightedKeyword > div:nth-child(1) > div > ul.ullilist > li')
+        # all_job_per_page = driver.find_elements_by_css_selector('#hightlightedKeyword > div:nth-child(1) > div > ul.ullilist > li')
         # Speed up code
-        # all_job_date = driver.find_elements_by_css_selector('#hightlightedKeyword > div:nth-child(1) > div > ul.ullilist > li div.job_optwrap > div.job_optitem.ico7')
-        # some code
-        job_count = 1
-        for i in range(0, len(all_job_per_page)):
-            # process each data 
-            job_element = all_job_per_page[i]
-            job_date = job_element.find_element_by_css_selector('div.job_optwrap > div.job_optitem.ico7').text[9:]
-            # Compare the date if it is within 10 days
-            if not is_job_within(job_date):
+        all_job_date = driver.find_elements_by_css_selector('#hightlightedKeyword > div:nth-child(1) > div > ul.ullilist > li div.job_optwrap > div.job_optitem.ico7')
+        all_job_date = [x.text[9:] for x in all_job_date]
+        data_range = len(all_job_date)
+        for i in range(0, len(all_job_date)):
+            if not is_job_within(all_job_date[i]):
+                data_range = i - 1
                 end_crawl = True
-                break
-            # if it is collect other data
-            job_heading_el = job_url = job_role = ''
-            try:
-                job_heading_el = job_element.find_element_by_css_selector('div.row > div.col-sm-9 > div > div.jtitle > h2 > a')
-            except Exception as e:
-                print('Error in heading')
-                print(e)
-            try:
-                job_url = job_heading_el.get_attribute('href')
-            except Exception as e:
-                print('Error in URL')
-                print(e)
-            try: 
-                job_role = job_heading_el.find_element_by_css_selector('span').text
-            except Exception as e:
-                print('Error in job role')
-                print(e)
-            except Exception as e:
-                print(e)
-            job_summary = ''
-            try:
-                job_summary = job_element.find_element_by_css_selector('div.row > div.col-sm-9 > div > div:nth-child(6) > span:nth-child(2)').text
-            except Exception as e:
-                job_summary = 'No Summary'
-            job_company = ''
-            try:
-                job_company = job_element.find_element_by_css_selector('div.row > div.col-sm-9 > div > div.jtxt.orange > a > span').text
-            except Exception as e:
-                job_company = 'No Summary'
-            # finally append the row data
-            # current_job_data = ['Monster', job_url, job_role.encode("utf-8"), job_date.encode("utf-8"), job_summary.encode("utf-8"), job_company.encode("utf-8")]
-            current_job_data = ['Monster', job_url, job_role, job_date, job_summary, job_company]
-            # current_job_data = ['Monster', job_url.encode("utf-8").decode("utf-8"), job_role.encode("utf-8").decode("utf-8"), job_date.encode("utf-8").decode("utf-8"), job_summary.encode("utf-8").decode("utf-8"), job_company.encode("utf-8").decode("utf-8")]
-            # print(current_job_data)
-            job_data.append(current_job_data)
-            print('Job ' + str(job_count))
-            job_count = job_count + 1
-        # add_data_to_file()
-        # job_data = 0
+        # [dat1, dat2, dat3]
+        all_job_heading_el = driver.find_elements_by_css_selector('#hightlightedKeyword > div:nth-child(1) > div > ul.ullilist > li div.row > div.col-sm-9 > div > div.jtitle > h2 > a')
+        all_url = [x.get_attribute('href') for x in all_job_heading_el]
+        all_job_role = [x.find_element_by_css_selector('span').text for x in all_job_heading_el]
+        all_job_summary = driver.find_elements_by_css_selector('#hightlightedKeyword > div:nth-child(1) > div > ul.ullilist > li div.row > div.col-sm-9 > div > div:nth-child(6) > span:nth-child(2)')
+        all_job_summary = [x.text for x in all_job_summary]
+        all_job_company = driver.find_elements_by_css_selector('#hightlightedKeyword > div:nth-child(1) > div > ul.ullilist > li div.row > div.col-sm-9 > div > div.jtxt.orange > a > span')
+        all_job_company = [x.text for x in all_job_company]
+        # ['Monster', 'Monster', 'Monster']
+        # End speed up code
+        job_data = zip(['Monster' for x in range(0, data_range)], all_url[:data_range], all_job_role[:data_range], all_job_date[:data_range], all_job_summary[:data_range], all_job_company[:data_range])
+        # current_job_data = ['Monster', job_url, job_role, job_date, job_summary, job_company]
         print('Appending jobs to file')
         job_file = open(filename, 'a', encoding='utf-8')
         #cv writing done here
