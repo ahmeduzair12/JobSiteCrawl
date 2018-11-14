@@ -1,7 +1,7 @@
 import scrapy
 from scrapy.http import FormRequest
-class QuotesSpider(scrapy.Spider):
-    name = "quotes"
+class NaukriSpider(scrapy.Spider):
+    name = "Naukri"
     page = 0
 
     def next_page(self):
