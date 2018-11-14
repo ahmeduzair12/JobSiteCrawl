@@ -11,7 +11,7 @@ class QuotesSpider(scrapy.Spider):
             callback=self.parse)
 
     def start_requests(self):
-        return [ self.next_page() for x in range(0, 100)]
+        return [ self.next_page() for x in range(0, 500)]
     def parse(self, response):
         for job in response.css('#hightlightedKeyword > div:nth-child(1) > div > ul.ullilist > li'):
             yield {
@@ -20,7 +20,8 @@ class QuotesSpider(scrapy.Spider):
                 'company': job.css('div.row > div.col-sm-9 > div > div.jtxt.orange > a > span::text').extract_first(),
                 'date': job.css('div.job_optwrap > div.job_optitem.ico7::text').extract_first(),
                 'summary': job.css('div.row > div.col-sm-9 > div > div:nth-child(6) > span:nth-child(2)::text').extract_first(),
-                'link':job.css('div.row > div.col-sm-9 > div > div.jtitle > h2 > a::attr(href)').extract_first()
+                'link':job.css('div.row > div.col-sm-9 > div > div.jtitle > h2 > a::attr(href)').extract_first(),
+                'Keyskills':job.css('div.row > div.col-sm-9 > div > div:nth-child(5) > span:nth-child(2)::text').extract_first()
             }
 
         # next_page = response.css('#hightlightedKeyword > div:nth-child(1) > div > ul.pager.pull-right > li:nth-child(2) > a::attr("href")').extract_first()

@@ -21,7 +21,8 @@ class QuotesSpider(scrapy.Spider):
                 'company': job.css('span.org::text').extract_first(),
                 'summary': job.css('span.desc::text').extract_first(),
                 'date': job.css('span.date::text').extract_first(),
-                'link': job.css('#jdUrl::attr(href)').extract_first()
+                'link': job.css('#jdUrl::attr(href)').extract_first(),
+                'Keyskills': job.css('span.skill::text').extract_first()
             }
 
         # next_page = response.css('#hightlightedKeyword > div:nth-child(1) > div > ul.pager.pull-right > li:nth-child(2) > a::attr("href")').extract_first()
